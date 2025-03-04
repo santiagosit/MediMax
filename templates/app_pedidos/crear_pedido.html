@@ -1,0 +1,120 @@
+{% extends 'base/base.html' %}
+{% block content %}
+
+<h2>Crear Pedido</h2>
+<form id="pedido-form" method="POST">
+    {% csrf_token %}
+    
+    <h3>Pedido</h3>
+    Cliente: {{ pedido_form.cliente }}
+    <br>
+    Valor total: <input type="text" id="valor_total" name="valor_total" value="0" readonly>
+    <br>
+    Estado: {{ pedido_form.estado }}
+
+    <h3>Productos</h3>
+    Nombre: <input type="text" id="nombre_producto">
+    Peso (kg): <input type="text" id="peso_producto" readonly>
+    <button type="button" onclick="obtenerPeso()">Obtener Peso</button>
+    <br>
+    Valor Unitario por Kg: <input type="text" id="valor_unitario">
+    <button type="button" onclick="agregarProducto()">Agregar Producto</button>
+
+    <h3>Lista de Productos</h3>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Peso (kg)</th>
+                <th>Valor Unitario</th>
+                <th>Subtotal</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody id="tabla_productos">
+        </tbody>
+    </table>
+
+    <button type="submit">Guardar Pedido</button>
+</form>
+
+<a href="{% url 'listar_pedidos' %}">Volver</a>
+
+<script>
+    let productos = [];
+
+    // ✅ Función para obtener el peso desde el API
+    // ✅ Función para obtener el peso desde el API
+    function obtenerPeso() {
+    fetch("/peso/")  // 👈 Asegúrate de que el endpoint es correcto
+    .then(response => response.json())
+    .then(data => {
+        if (data.peso_kg) {
+            document.getElementById("peso_producto").value = data.peso_kg;  // ✅ Usar el ID correcto
+        } else {
+            alert("No se recibió un peso válido desde la API.");
+        }
+    })
+    .catch(error => {
+        console.error("Error obteniendo el peso:", error);
+        alert("Error obteniendo el peso.");
+    });
+}
+
+
+    function agregarProducto() {
+        let nombre = document.getElementById('nombre_producto').value;
+        let peso = document.getElementById('peso_producto').value;
+        let valorUnitario = document.getElementById('valor_unitario').value;
+        
+        if (!nombre || !peso || !valorUnitario) {
+            alert("Todos los campos del producto son obligatorios.");
+            return;
+        }
+
+        let subtotal = parseFloat(peso) * parseFloat(valorUnitario);
+        productos.push({ nombre, peso, valorUnitario, subtotal });
+
+        actualizarTabla();
+        actualizarTotal();
+    }
+
+    function actualizarTabla() {
+        let tabla = document.getElementById("tabla_productos");
+        tabla.innerHTML = "";
+        
+        productos.forEach((producto, index) => {
+            let fila = `
+                <tr>
+                    <td>${producto.nombre}</td>
+                    <td>${producto.peso}</td>
+                    <td>${producto.valorUnitario}</td>
+                    <td>${producto.subtotal}</td>
+                    <td><button type="button" onclick="eliminarProducto(${index})">Eliminar</button></td>
+                </tr>
+            `;
+            tabla.innerHTML += fila;
+        });
+    }
+
+    function actualizarTotal() {
+        let total = productos.reduce((sum, producto) => sum + producto.subtotal, 0);
+        document.getElementById("valor_total").value = total.toFixed(2);
+    }
+
+    function eliminarProducto(index) {
+        productos.splice(index, 1);
+        actualizarTabla();
+        actualizarTotal();
+    }
+
+    document.getElementById("pedido-form").addEventListener("submit", function(event) {
+        let inputProductos = document.createElement("input");
+        inputProductos.type = "hidden";
+        inputProductos.name = "productos";
+        inputProductos.value = JSON.stringify(productos);
+        this.appendChild(inputProductos);
+    });
+</script>
+
+{% endblock %}

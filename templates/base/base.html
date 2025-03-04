@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}MediMax{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <h1>MediMax</h1>
+        {% if request.user.rol == "administrador" %}
+        <nav>
+            <ul>                
+                <li><a href="/admin_dashboard/">Home</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Repartidores
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'lista_repartidores' %}">Listar Repartidores</a></li>
+                        <li><a class="dropdown-item" href="{% url 'crear_repartidor' %}">Crear Repartidor</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Clientes
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <li><a class="dropdown-item" href="{% url 'listar_clientes' %}">Listar Clientes</a></li>
+                        <li><a class="dropdown-item" href="{% url 'crear_cliente' %}">Crear Cliente</a></li>
+                    </ul>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownPedidos" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Pedidos
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbarDropdownPedidos">
+                        <li><a class="dropdown-item" href="{% url 'asignar_pedido' %}">Asignar Pedidos</a></li>
+                        <li><a class="dropdown-item" href="{% url 'listar_pedidos' %}">Listar Pedidos</a></li>
+                        <li><a class="dropdown-item" href="{% url 'crear_pedido' %}">Crear Pedido</a></li>
+                    </ul>
+                </li>                
+                <li><a href="{% url 'cerrar_sesion' %}" class="btn btn-danger">Cerrar sesión</a></li>
+            </ul>
+        </nav>
+        {% elif request.user.rol == "repartidor" %}
+        <nav>
+            <ul>
+                <li><a href="{% url 'repartidor_dashboard' %}">Home</a></li>
+                <li><a href="{% url 'cerrar_sesion' %}" class="btn btn-danger">Cerrar sesión</a></li>
+            </ul>
+        </nav>
+{% endif %}
+    </header>
+
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+</body>
+</html>

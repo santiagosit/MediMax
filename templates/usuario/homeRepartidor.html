@@ -1,0 +1,41 @@
+{% extends 'base/base.html' %}
+{% block title %}Panel de Repartidor{% endblock %}
+{% block content %}
+    <h2>Bienvenido, Repartidor</h2>
+    <p>Aquí puedes ver tus pedidos asignados.</p>
+    <table id="pedidosTable" class="display">
+        <thead>
+            <tr>
+                <th>Número de Orden</th>
+                <th>Cliente</th>
+                <th>Valor Total</th>
+                <th>Estado</th>
+                <th>Fecha de Creación</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pedido in pedidos %}
+            <tr>
+                <td>{{ pedido.numero_orden }}</td>
+                <td>{{ pedido.cliente.nombre }} {{ pedido.cliente.apellido }}</td>
+                <td>${{ pedido.valor_total }}</td>
+                <td>{{ pedido.estado }}</td>
+                <td>{{ pedido.fecha_creacion }}</td>
+                <td>
+                    <a href="{% url 'editar_pedido' pedido.id %}" class="btn btn-warning">Editar</a>
+                    <a href="{% url 'ver_pedido' pedido.id %}" class="btn btn-info">Ver</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <!-- Script para DataTables -->
+    <script>
+        $(document).ready(function() {
+            $('#pedidosTable').DataTable();
+        });
+    </script>
+     
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends 'base/base.html' %}
+{% block content %}
+<h2>Lista de Pedidos</h2>
+
+<!-- Formulario de Filtros -->
+<form method="GET">
+    <label for="fecha">Fecha:</label>
+    <input type="date" name="fecha" id="fecha" value="{{ request.GET.fecha }}">
+
+    <label for="filtro_tiempo">Filtrar por:</label>
+    <select id="filtro_tiempo" name="filtro_tiempo">
+        <option value="">Día</option>
+        <option value="semana" {% if request.GET.filtro_tiempo == "semana" %}selected{% endif %}>Semana</option>
+        <option value="mes" {% if request.GET.filtro_tiempo == "mes" %}selected{% endif %}>Mes</option>
+        <option value="año" {% if request.GET.filtro_tiempo == "año" %}selected{% endif %}>Año</option>
+    </select>
+
+    <label for="cliente">Cliente:</label>
+    <input type="text" name="cliente" id="cliente" placeholder="Nombre del cliente" value="{{ request.GET.cliente }}">
+
+    <label for="repartidor">Repartidor:</label>
+    <input type="text" name="repartidor" id="repartidor" placeholder="Nombre del repartidor" value="{{ request.GET.repartidor }}">
+
+    <label for="estado">Estado:</label>
+    <select name="estado" id="estado">
+        <option value="">Todos</option>
+        <option value="Pendiente" {% if request.GET.estado == "Pendiente" %}selected{% endif %}>Pendiente</option>
+        <option value="En camino" {% if request.GET.estado == "En camino" %}selected{% endif %}>En camino</option>
+        <option value="Entregado" {% if request.GET.estado == "Entregado" %}selected{% endif %}>Entregado</option>
+    </select>
+
+    <button type="submit">Filtrar</button>
+    <a href="{% url 'listar_pedidos' %}"><button type="button">Limpiar Filtros</button></a>
+</form>
+
+<!-- Tabla que lista los pedidos -->
+<table>
+    <tr>
+        <th>Orden</th>
+        <th>Cliente</th>
+        <th>Valor Total</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+    </tr>
+    {% for pedido in pedidos %}
+    <tr>
+        <td>#{{ pedido.numero_orden }}</td>
+        <td>{{ pedido.cliente }}</td>
+        <td>{{ pedido.valor_total }}</td>
+        <td>{{ pedido.estado }}</td>
+        <td><a href="{% url 'ver_pedido' pedido.id %}">Ver Detalles</a></td>
+        <td>
+            <a href="{% url 'editar_pedido' pedido.id %}">Editar</a>
+            <a href="{% url 'eliminar_pedido' pedido.id %}" 
+   onclick="return confirm('¿Estás seguro de que deseas eliminar este pedido?');">
+   Eliminar
+</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

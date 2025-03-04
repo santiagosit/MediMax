@@ -1,0 +1,17 @@
+{% extends 'base/base.html' %}
+{% block content %}
+<h1>Pedido #{{ pedido.numero_orden }}</h1>
+<p><strong>Cliente:</strong> {{ pedido.cliente.nombre }} {{ pedido.cliente.apellido }} ({{ pedido.cliente.cedula }})</p>
+<p><strong>Estado:</strong> {{ pedido.estado }}</p>
+<p><strong>Valor Total:</strong> ${{ pedido.valor_total }}</p>
+<p><strong>Fecha de Creación:</strong> {{ pedido.fecha_creacion }}</p>
+
+<h2>Productos en el Pedido</h2>
+<ul>
+    {% for producto in pedido.productos.all %}
+        <li>{{ producto.nombre }} - {{ producto.peso }}kg - ${{ producto.valor_unitario }}</li>
+    {% empty %}
+        <li>No hay productos en este pedido.</li>
+    {% endfor %}
+</ul>
+{% endblock %}
