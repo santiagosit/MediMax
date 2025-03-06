@@ -30,7 +30,7 @@ INSTALLED_APPS = [
     'app_clientes',
     'app_pedidos',
 ]
-
+#No hace cambios
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
